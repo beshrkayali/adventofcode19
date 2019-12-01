@@ -6,7 +6,6 @@ type
     mass: int
     fuel: int
 
-
 proc fuelForMass(mass: int): int =
   var fuel = int floor(mass / 3) - 2
 
@@ -15,7 +14,7 @@ proc fuelForMass(mass: int): int =
     return fuel
   else:
     return 0
-    
+
 proc newModule(mass: int): Module =
   let fuel = fuelForMass mass
 
@@ -24,8 +23,8 @@ proc newModule(mass: int): Module =
 when isMainModule:
   const fuelCounterUpper = splitLines(readFile("input.txt"))
   .map(proc (line: string): int =
-           try: parseInt line
-           except: 0)
+    try: parseInt line
+    except: 0)
   .filter(proc (mass: int): bool = mass > 0)
   .map(proc (mass: int): Module = newModule(mass))
   .map(proc (module: Module): int = module.fuel)
