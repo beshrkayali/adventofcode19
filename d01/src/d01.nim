@@ -5,9 +5,20 @@ type
   Module = object
     mass: int
     fuel: int
+
+
+proc fuelForMass(mass: int): int =
+  var fuel = int floor(mass / 3) - 2
+
+  if fuel > 0:
+    fuel += fuelForMass(fuel)
+    return fuel
+  else:
+    return 0
     
 proc newModule(mass: int): Module =
-  let fuel = int floor(mass / 3) - 2
+  let fuel = fuelForMass mass
+
   Module(mass: mass, fuel: fuel)
 
 when isMainModule:
