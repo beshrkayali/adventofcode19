@@ -17,14 +17,7 @@ type CPU = ref object
   rom: seq[Instruction]
   pc: int
 
-proc newCPU(intcode: string): CPU =
-  let rom = intcode.split(",")
-  .map(proc (line: string): int =
-    try: parseInt line
-    except: -1)
-  .filter(proc (instruction: int): bool = instruction > -1)
-  .map(proc (code: int): Instruction = code)
-
+proc newCPU(rom: seq[Instruction]): CPU =
   CPU(rom: rom, state: CPUState.off, pc: 0)
 
 proc turnOn(cpu: CPU) =
@@ -42,15 +35,11 @@ proc exec(cpu: CPU, instruction: Instruction, operands: seq[Instruction]) =
   case instruction:
     # Adding
     of 1:
-      echo("Add: ", operands,  " / ", cpu.rom[operands[0]], " + ", cpu.rom[operands[1]] , " - Before: ", cpu.rom[operands[2]])
       cpu.rom[operands[2]] = cpu.rom[operands[0]] + cpu.rom[operands[1]]
-      echo("After: ", cpu.rom[operands[2]])
     of 2:
-      echo("Multiply: ", operands,  " / ", cpu.rom[operands[0]], " * ", cpu.rom[operands[1]] , " - Before: ", cpu.rom[operands[2]])
       cpu.rom[operands[2]] = cpu.rom[operands[0]] * cpu.rom[operands[1]]
-      echo("After: ", cpu.rom[operands[2]])
     of 99:
-      echo("Done")
+      discard
     else:
       echo("Unknown: ", instruction)
 
@@ -59,8 +48,25 @@ proc process(cpu: CPU) =
      let (inst, operands) = read cpu
      cpu.exec(inst, operands)
 
+proc readCode(): seq[Instruction]  =
+  return readFile("intcode.txt").split(",")
+  .map(proc (line: string): int =
+    try: parseInt line
+    except: -1)
+  .filter(proc (instruction: int): bool = instruction > -1)
+  .map(proc (code: int): Instruction = code)
+     
 when isMainModule:
-  let cpu = newCPU(readFile("intcode.txt"))
-  cpu.turnOn()
-  cpu.process()
-  echo(cpu.rom[0])
+  var code = readCode()
+
+  for n in 0 .. 99:    
+    code[1] = n
+    for v in 0 .. 99:
+      code[2] = v
+
+      let cpu = newCPU(code)
+      cpu.turnOn()
+      cpu.process()
+      if cpu.rom[0] == 19690720:
+        echo("Noun: ", n)
+        echo("Verb: ", v)
