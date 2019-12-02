@@ -1,3 +1,6 @@
+# Advent of Code 2019
+# Day 1: The Tyranny of the Rocket Equation
+
 import strutils, sequtils
 import math
 
@@ -12,8 +15,7 @@ proc fuelForMass(mass: int): int =
   if fuel > 0:
     fuel += fuelForMass(fuel)
     return fuel
-  else:
-    return 0
+  return 0
 
 proc newModule(mass: int): Module =
   let fuel = fuelForMass mass
