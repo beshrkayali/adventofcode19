@@ -1,5 +1,5 @@
 # Advent of Code 2019
-# Day 2:
+# Day 2: 1202 Program Alarm
 
 import strutils, sequtils
 
@@ -33,7 +33,6 @@ proc read(cpu: CPU): (Instruction, seq[Instruction]) =
 
 proc exec(cpu: CPU, instruction: Instruction, operands: seq[Instruction]) =
   case instruction:
-    # Adding
     of 1:
       cpu.rom[operands[2]] = cpu.rom[operands[0]] + cpu.rom[operands[1]]
     of 2:
